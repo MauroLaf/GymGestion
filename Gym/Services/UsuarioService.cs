@@ -8,13 +8,15 @@ namespace Gym.Services
     public class UsuarioService
     {
         private AppDbContext _context;
-        public UsuarioService(AppDbContext context) {
+        public UsuarioService(AppDbContext context)
+        {
             _context = context;
         }
 
         //Metodo Get All
         //agregue Result<> a la coleccion
-        public async Task<Result<IEnumerable<Usuario>>> GetAllUsers() {
+        public async Task<Result<IEnumerable<Usuario>>> GetAllUsers()
+        {
             try
             {
                 var usuarios = await _context.Usuarios.ToListAsync(); //aca uso await porque llamo al metodo async y devolvera una lista async con los usuarios
@@ -42,15 +44,17 @@ namespace Gym.Services
         //Metodo Get por ID(int)
         public async Task<Result<Usuario>> GetUserID(int id)
         {
-            try { 
-        var usuarioID = await _context.Usuarios.FindAsync(id);
-            if(usuarioID == null)
+            try
+            {
+                var usuarioID = await _context.Usuarios.FindAsync(id);
+                if (usuarioID == null)
                 {
                     return Result<Usuario>.FailureResult("No se encuentra el usuario con ese id");
                 }
                 return Result<Usuario>.SuccesResult(usuarioID);
             }
-            catch (DbUpdateException dbEx) {
+            catch (DbUpdateException dbEx)
+            {
                 Console.WriteLine($"Error en la base de datos: {dbEx.Message}");
                 return Result<Usuario>.FailureResult($"Error en la base de datos: {dbEx.Message}");
             }
@@ -59,8 +63,54 @@ namespace Gym.Services
                 Console.WriteLine($"Error general: {ex.Message}");
                 return Result<Usuario>.FailureResult($"Error desconocido: {ex.Message}");
             }
-        
+
 
         }
+        //Metodo Post
+        public async Task<Result<Usuario>> CreateUser(Usuario usuario)
+        {
+            try
+            {
+                // Agregar el usuario a la base de datos
+                await _context.Usuarios.AddAsync(usuario);
+                await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
+
+                return Result<Usuario>.SuccesResult(usuario); // Retornar el usuario creado
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return Result<Usuario>.FailureResult($"Error al guardar el usuario: {dbEx.Message}");
+            }
+        }
+        //Metodo Put
+        public async Task<Result<Usuario>> UpdateUser(int id, Usuario usuario)
+        {
+            try
+            {
+                var userExist = await _context.Usuarios.FindAsync(id);
+                if (userExist == null)
+                {
+                    return Result<Usuario>.FailureResult("Usuario no encontrado");
+                }
+                // Actualizar los campos recibidos, uso coalesce con usuario existente, si es null queda tal cual y si no es null se actualiza con lo que envie en "usuario"
+                userExist.Nombre = usuario.Nombre ?? userExist.Nombre;
+                userExist.Email = usuario.Email ?? userExist.Email;
+                userExist.Telefono = usuario.Telefono ?? userExist.Telefono;
+                userExist.FechaRegistro = usuario.FechaRegistro ?? userExist.FechaRegistro;
+                userExist.Rol = usuario.Rol ?? userExist.Rol;
+                await _context.SaveChangesAsync();
+
+                return Result<Usuario>.SuccesResult(userExist);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return Result<Usuario>.FailureResult($"Error al actualizar el usuario: {dbEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                return Result<Usuario>.FailureResult($"Error desconocido: {ex.Message}");
+            }
+        }
+
     }
 }
