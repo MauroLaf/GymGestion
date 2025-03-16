@@ -15,7 +15,7 @@ namespace Gym.Controller
         {
             _usuarioService = usuarioService;
         }
-
+        #region
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetTotalUsers() //utilizo ActionREsult <>
         {
@@ -110,7 +110,22 @@ namespace Gym.Controller
 
             return NotFound(new { message = result.ErrorMsg });
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserByID(int id)
+        {
+            var result = await _usuarioService.DeleteUser(id);
+
+            if (!result.Success)
+            {
+                return result.ErrorMsg == "Usuario no encontrado."
+                    ? NotFound(new { message = result.ErrorMsg }) // 404 si no existe
+                    : BadRequest(new { message = result.ErrorMsg }); // 400 si hay otro error
+            }
+
+            return Ok(new { message = "Usuario eliminado correctamente" });
+        }
+        #endregion
 
     }
-}
+    }
 

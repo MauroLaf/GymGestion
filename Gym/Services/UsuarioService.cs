@@ -1,7 +1,6 @@
 ﻿using Gym.Models;
 using Microsoft.EntityFrameworkCore;
 using Gym.Results;
-using Microsoft.Identity.Client;
 
 namespace Gym.Services
 {
@@ -111,6 +110,29 @@ namespace Gym.Services
                 return Result<Usuario>.FailureResult($"Error desconocido: {ex.Message}");
             }
         }
+        //Metodo Delete
+        //ya que no devuelve el usuario devolvera un tipo bool si existe o no
+        public async Task<Result<bool>> DeleteUser(int id)
+        {
+            try
+            {
+                var userExist = await _context.Usuarios.FindAsync(id);
+                if (userExist == null)
+                {
+                    return Result<bool>.FailureResult("Usuario no encontrado");
+                }
+                //accion
+                _context.Usuarios.Remove(userExist);
+                await _context.SaveChangesAsync();//guardo cambios
 
+                //retornar exito
+                return Result<bool>.SuccesResult(true);
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.FailureResult($"Error al eliminar el usuario: {ex.Message}");
+            }
+
+        }
     }
 }
