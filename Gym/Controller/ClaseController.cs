@@ -15,6 +15,7 @@ namespace Gym.Controller
         {
             _claseService = claseService;
         }
+        #region
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clase>>> GetTotalClasses()
         {
@@ -40,7 +41,7 @@ namespace Gym.Controller
 
         }
         [HttpPost]
-        public async Task<ActionResult<Clase>> AddClass([FromBody]Clase clase)
+        public async Task<ActionResult<Clase>> AddClass([FromBody] Clase clase)
         {
             if (clase == null)
             {
@@ -49,22 +50,22 @@ namespace Gym.Controller
             }
             var result = await _claseService.CreateClass(clase); //almaceno en resultado la creacion de una clase
             if (result.Success)
-            {  
+            {
                 return CreatedAtAction(nameof(GetClassByID), new { id = result.Data.Id }, result.Data); //recomendacion de gpt para dar mas info
             }
             return BadRequest(new { message = result.ErrorMsg });
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<Clase>> UpdateClassByID([FromBody]int id, Clase clase)
+        public async Task<ActionResult<Clase>> UpdateClassByID([FromBody] int id, Clase clase)
         {
             if (clase == null)
             {
-                return BadRequest(new { message = "El usuario no puede ser nulo" });
+                return BadRequest(new { message = "La clase no puede ser nula" });
             }
             var result = await _claseService.UpdateClass(id, clase);
             if (result.Success)
-            {  
-                return Ok(result.Data); 
+            {
+                return Ok(result.Data);
             }
             return NotFound(new { message = result.ErrorMsg });
         }
@@ -80,8 +81,10 @@ namespace Gym.Controller
             }
 
             return Ok(new { message = "Clase eliminada correctamente" });
-        
-    
+
+
         }
-    }   
+        #endregion
+    }
+
 }

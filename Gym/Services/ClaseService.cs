@@ -1,13 +1,12 @@
 ﻿using Gym.Models;
 using Microsoft.EntityFrameworkCore;
 using Gym.Results;
-using Microsoft.Identity.Client;
 
 namespace Gym.Services
 {
     public class ClaseService
     {
-        private readonly AppDbContext _context;
+        private AppDbContext _context;
 
         public ClaseService(AppDbContext context)
         {
@@ -64,11 +63,11 @@ namespace Gym.Services
             }
             catch (DbUpdateException dbEx)
             {
-                return Result<Clase>.FailureResult($"Error al guardar el usuario: {dbEx.Message}");
+                return Result<Clase>.FailureResult($"Error al guardar la clase: {dbEx.Message}");
             }
             catch (Exception ex)
             {
-                return Result<Clase>.FailureResult($"Error inesperado al crear el usuario: {ex.Message}");
+                return Result<Clase>.FailureResult($"Error inesperado al crear la clase: {ex.Message}");
             }
         }
         //PUT
@@ -84,8 +83,11 @@ namespace Gym.Services
                 }
                 classExist.Nombre = clase.Nombre ?? classExist.Nombre;
                 classExist.Instructor = clase.Instructor ?? classExist.Instructor;
-                classExist.FechaHora = classExist.FechaHora;
-                classExist.CuposMax = classExist.CuposMax;
+                /*
+                VER COMO AGREGAR COALESCE en datetime e int
+                classExist.FechaHora = clase.FechaHora ?? classExist.FechaHora;
+                classExist.CuposMax = clase.CuposMax ?? classExist.CuposMax;
+                */
 
                 await _context.SaveChangesAsync();
 

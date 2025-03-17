@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // 1.2. Registro del servicio UsuarioService
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<ClaseService>();
+builder.Services.AddScoped<MembresiaService>();
 
 // 2. Controladores
 builder.Services.AddControllers();
