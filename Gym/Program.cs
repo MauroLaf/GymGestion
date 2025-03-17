@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // 1.2. Registro del servicio UsuarioService
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<ClaseService>();
 
 // 2. Controladores
 builder.Services.AddControllers();

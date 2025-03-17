@@ -9,7 +9,7 @@
 
         // Metodo para verificar exito (estatico dentro de clase) pasare parametro de datos si hay si es false da msj
 
-    public static Result<T> SuccesResult(T data)=>new Result<T>
+    public static Result<T> SuccessResult(T data)=>new Result<T>
     { Success=true,Data = data };
 
     public static Result<T> FailureResult(string errorMsg) => new Result<T>

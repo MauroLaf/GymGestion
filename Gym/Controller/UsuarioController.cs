@@ -39,9 +39,7 @@ namespace Gym.Controller
             //puedo poner notfound(result.errormsg) pero saldria sin formato json en un simple string
             return NotFound
                 (new
-                {
-                    message = result.ErrorMsg
-                }
+                { message = result.ErrorMsg }
                 );
         }
         [HttpPost]
@@ -99,7 +97,7 @@ namespace Gym.Controller
         {
             if (usuario == null)
             {
-                return BadRequest(new { message = "El usuario no puede ser nulo." });
+                return BadRequest(new { message = "El usuario no puede ser nulo" });
             }
             var result = await _usuarioService.UpdateUser(id, usuario);
 
@@ -111,13 +109,14 @@ namespace Gym.Controller
             return NotFound(new { message = result.ErrorMsg });
         }
         [HttpDelete("{id}")]
+        //uso IActionResult ya que no devuelvo dato especifico solo respuesta http
         public async Task<IActionResult> DeleteUserByID(int id)
         {
             var result = await _usuarioService.DeleteUser(id);
 
             if (!result.Success)
             {
-                return result.ErrorMsg == "Usuario no encontrado."
+                return result.ErrorMsg == "Usuario no encontrado por id"
                     ? NotFound(new { message = result.ErrorMsg }) // 404 si no existe
                     : BadRequest(new { message = result.ErrorMsg }); // 400 si hay otro error
             }
@@ -127,5 +126,5 @@ namespace Gym.Controller
         #endregion
 
     }
-    }
+}
 
