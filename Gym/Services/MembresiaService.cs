@@ -11,6 +11,7 @@ namespace Gym.Services
         {
             _context = context;
         }
+        #region
         // GET ALL
         public async Task<Result<IEnumerable<Membresia>>> GetAllMembresia()
         {
@@ -83,6 +84,7 @@ namespace Gym.Services
                 /*
                 VER COMO PONER COALESCE EN int y decimal
                 membresiaExist.Precio = membresia.Precio ?? membresiaExist.Precio;
+                membresiaExist.FechaInicio = membresia.FechaInicio ?? membresiaExist.FechaInicio
                 membresiaExist.DuracionDias = membresia.DuracionDias ?? membresia.DuracionDias;
                 */
                 await _context.SaveChangesAsync();
@@ -122,6 +124,24 @@ namespace Gym.Services
                 return Result<bool>.FailureResult($"Error inesperado al eliminar membresia: {ex.Message}");
             }
         }
+        #endregion
+        public int ObtenerDuracionPorTipo(string nombre)
+        {
+            return nombre switch //forma compacta del switch, no se pone case,return,break ni default(_=>)
+            {
+                "Básica" => 30,
+                "Estándar" => 60,
+                "Premium" => 90,
+                _ => throw new Exception("Tipo de membresia desconocido")
+            };
+        }
+
+        public bool VencimientoMembresia(Membresia nombreMembresia)
+            {
+            DateTime fechaVencimiento = nombreMembresia.FechaInicio.AddDays(nombreMembresia.DuracionDias);
+            return fechaVencimiento < DateTime.Now;
+            
+            }
     }
 }
 
