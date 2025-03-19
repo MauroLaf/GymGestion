@@ -11,7 +11,7 @@ namespace Gym.Controller
     public class MembresiaController : ControllerBase
     {
         private MembresiaService _membresiaService;
-        public MembresiaController(ClaseService membresiaService)
+        public MembresiaController(MembresiaService membresiaService)
         {
             _membresiaService = membresiaService;
         }
@@ -56,7 +56,8 @@ namespace Gym.Controller
             return BadRequest(new { message = result.ErrorMsg });
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<Membresia>> UpdateMembresiaByID([FromBody] int id, Membresia membresia)
+        public async Task<ActionResult<Membresia>> UpdateMembresiaByID(int id, [FromBody] Membresia membresia)
+
         {
             if (membresia == null)
             {
@@ -88,4 +89,3 @@ namespace Gym.Controller
     }
 
 }
-

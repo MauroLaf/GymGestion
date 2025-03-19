@@ -56,7 +56,7 @@ namespace Gym.Controller
             return BadRequest(new { message = result.ErrorMsg });
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<Clase>> UpdateClassByID([FromBody] int id, Clase clase)
+        public async Task<ActionResult<Clase>> UpdateClassByID(int id, [FromBody] Clase clase)
         {
             if (clase == null)
             {

@@ -7,9 +7,9 @@ namespace Gym.Services
     public class MembresiaService
     {
         private AppDbContext _context;
-        public MembresiaService (AppDbContext context)
-        {  
-            _context = context; 
+        public MembresiaService(AppDbContext context)
+        {
+            _context = context;
         }
         // GET ALL
         public async Task<Result<IEnumerable<Membresia>>> GetAllMembresia()
@@ -124,5 +124,4 @@ namespace Gym.Services
         }
     }
 }
-    }
-}
+
