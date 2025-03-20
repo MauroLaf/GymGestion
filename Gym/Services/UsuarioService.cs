@@ -88,7 +88,7 @@ namespace Gym.Services
                 userExist.Nombre = usuario.Nombre ?? userExist.Nombre;
                 userExist.Email = usuario.Email ?? userExist.Email;
                 userExist.Telefono = usuario.Telefono ?? userExist.Telefono;
-                userExist.FechaRegistro = usuario.FechaRegistro ?? userExist.FechaRegistro;
+                userExist.FechaRegistro = usuario.FechaRegistro; //como es obligatorio nunca sera null y no debo comprobarlo
                 userExist.Rol = usuario.Rol ?? userExist.Rol;
 
                 await _context.SaveChangesAsync();

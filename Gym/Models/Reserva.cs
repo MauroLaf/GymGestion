@@ -11,7 +11,7 @@ public partial class Reserva
 
     public int ClaseId { get; set; }
 
-    public DateTime? FechaReserva { get; set; }
+    public DateTime FechaReserva { get; set; }
 
     public virtual Clase Clase { get; set; } = null!;
 

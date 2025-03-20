@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
+/* ---para hacer scafold---
+dotnet ef dbcontext scaffold "Server=localhost;Database=gestiongym;User Id=root;Password=root;" Pomelo.EntityFrameworkCore.MySql --output-dir Models --force */
+
 namespace Gym.Models;
 
 public partial class AppDbContext : DbContext
@@ -40,7 +43,9 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("clases");
 
-            entity.Property(e => e.FechaHora).HasColumnType("datetime");
+            entity.Property(e => e.FechaHora)
+                .IsRequired()
+                .HasColumnType("datetime");
             entity.Property(e => e.Instructor).HasMaxLength(100);
             entity.Property(e => e.Nombre).HasMaxLength(100);
         });
@@ -98,11 +103,6 @@ public partial class AppDbContext : DbContext
                 .HasDefaultValueSql("'cliente'")
                 .HasColumnType("enum('cliente','admin')");
             entity.Property(e => e.Telefono).HasMaxLength(20);
-
-            entity.HasOne(d => d.Membresia).WithMany(p => p.Usuarios)
-                .HasForeignKey(d => d.MembresiaId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("usuarios_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

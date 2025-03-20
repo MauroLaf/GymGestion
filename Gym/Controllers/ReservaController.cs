@@ -2,7 +2,7 @@
 using Gym.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Gym.Controller
+namespace Gym.Controllers
 {
 
     [Route("sistema/[controller]")]

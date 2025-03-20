@@ -81,12 +81,9 @@ namespace Gym.Services
                     return Result<Membresia>.FailureResult("No se ha encontrado una membresia asociada al id");
                 }
                 membresiaExist.Nombre = membresia.Nombre ?? membresiaExist.Nombre;
-                /*
-                VER COMO PONER COALESCE EN int y decimal
-                membresiaExist.Precio = membresia.Precio ?? membresiaExist.Precio;
-                membresiaExist.FechaInicio = membresia.FechaInicio ?? membresiaExist.FechaInicio
-                membresiaExist.DuracionDias = membresia.DuracionDias ?? membresia.DuracionDias;
-                */
+                membresiaExist.FechaInicio = membresia.FechaInicio; //sera igual que la membresia que asigna en cuanto se crea usuario y elige membresia
+                membresiaExist.Precio = membresia.Precio; //es fija para cada membresia
+                membresiaExist.DuracionDias = membresia.DuracionDias; //es esta determinada por el tipo de membresia
                 await _context.SaveChangesAsync();
 
                 return Result<Membresia>.SuccessResult(membresiaExist);
@@ -137,11 +134,11 @@ namespace Gym.Services
         }
 
         public bool VencimientoMembresia(Membresia nombreMembresia)
-            {
+        {
             DateTime fechaVencimiento = nombreMembresia.FechaInicio.AddDays(nombreMembresia.DuracionDias);
-            return fechaVencimiento < DateTime.Now;
-            
-            }
+            return fechaVencimiento < DateTime.Now; 
+        }
+
     }
 }
 
