@@ -70,33 +70,50 @@ namespace Gym.Services
             }
         }
         //PUT
-        public async Task<Result<Membresia>> UpdateMembresia(int id, Membresia membresia)
+        public async Task<Result<Membresia>> UpdateMembresia(int userId, Membresia membresia)
         {
             try
             {
-                var membresiaExist = await _context.Membresias.FindAsync(id);
+                // Buscar el usuario por su id
+                var usuarioResult = await _context.Usuarios.FindAsync(userId); // Usamos FindAsync si ya tienes el id
+                if (usuarioResult == null)
+                {
+                    // Si no encontramos al usuario, retornamos un mensaje de error
+                    return Result<Membresia>.FailureResult("Usuario no encontrado.");
+                }
+
+                // Buscar la membresía asociada al usuario a través del MembresiaId
+                var membresiaExist = await _context.Membresias.FirstOrDefaultAsync(m => m.Id == usuarioResult.MembresiaId);
                 if (membresiaExist == null)
                 {
-                    //retornamos un result que es el tipo que debemos devolver y accedemos a su metodo para manejar error
-                    return Result<Membresia>.FailureResult("No se ha encontrado una membresia asociada al id");
+                    // Si no encontramos la membresía asociada, retornamos un mensaje de error
+                    return Result<Membresia>.FailureResult("Membresía no encontrada para este usuario.");
                 }
-                membresiaExist.Nombre = membresia.Nombre ?? membresiaExist.Nombre;
-                membresiaExist.FechaInicio = membresia.FechaInicio; //sera igual que la membresia que asigna en cuanto se crea usuario y elige membresia
-                membresiaExist.Precio = membresia.Precio; //es fija para cada membresia
-                membresiaExist.DuracionDias = membresia.DuracionDias; //es esta determinada por el tipo de membresia
+
+                // Actualizamos los campos de la membresía con los valores recibidos
+                membresiaExist.Nombre = membresia.Nombre ?? membresiaExist.Nombre;  // Asignamos nombre si es nuevo (si es null, mantenemos el existente)
+                membresiaExist.FechaInicio = membresia.FechaInicio;  // Asignamos la fecha de inicio de la membresía
+                membresiaExist.Precio = membresia.Precio;  // Actualizamos el precio si es necesario
+                membresiaExist.DuracionDias = membresia.DuracionDias;  // Duración de la membresía, si cambia
+
+                // Guardamos los cambios realizados en la base de datos
                 await _context.SaveChangesAsync();
 
+                // Retornamos la membresía actualizada
                 return Result<Membresia>.SuccessResult(membresiaExist);
             }
             catch (DbUpdateException dbEx)
             {
-                return Result<Membresia>.FailureResult($"Error al actualizar membresia: {dbEx.Message}");
+                // Si ocurre un error al guardar los cambios, retornamos un mensaje de error
+                return Result<Membresia>.FailureResult($"Error al actualizar la membresía: {dbEx.Message}");
             }
             catch (Exception ex)
             {
-                return Result<Membresia>.FailureResult($"Error inesperado al actualizar membresia: {ex.Message}");
+                // Si ocurre cualquier otro error inesperado, retornamos un mensaje genérico de error
+                return Result<Membresia>.FailureResult($"Error inesperado al actualizar la membresía: {ex.Message}");
             }
         }
+
         public async Task<Result<bool>> DeleteMembresia(int id)
         {
             try
@@ -137,6 +154,32 @@ namespace Gym.Services
         {
             DateTime fechaVencimiento = nombreMembresia.FechaInicio.AddDays(nombreMembresia.DuracionDias);
             return fechaVencimiento < DateTime.Now; 
+        }
+        // Método para obtener la membresía de un usuario a partir de su MembresiaId
+        public async Task<Result<Membresia>> GetMembresiaPorUsuario(int usuarioId)
+        {
+            // Buscamos al usuario usando su Id
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Id == usuarioId); // Aquí estamos buscando por Id de Usuario
+
+            if (usuario == null)
+            {
+                // Si no se encuentra el usuario, devolvemos un fallo
+                return Result<Membresia>.FailureResult("No se encontró el usuario especificado");
+            }
+
+            // Ahora, obtenemos la membresía usando el MembresiaId del usuario
+            var membresia = await _context.Membresias
+                .FirstOrDefaultAsync(m => m.Id == usuario.MembresiaId);
+
+            if (membresia == null)
+            {
+                // Si no se encuentra la membresía, devolvemos un fallo
+                return Result<Membresia>.FailureResult("No se encontró la membresía asociada al usuario");
+            }
+
+            // Si encontramos la membresía, devolvemos éxito
+            return Result<Membresia>.SuccessResult(membresia);
         }
 
     }

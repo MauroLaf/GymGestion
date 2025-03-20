@@ -105,6 +105,21 @@ namespace Gym.Controllers
             return Ok(new { Id = id, Vencida = vencida });
         }
 
+        // Método para obtener la membresía asociada a un usuario
+        [HttpGet("usuario/{usuarioId}")]
+        public async Task<ActionResult<Membresia>> GetMembresiaPorUsuario(int usuarioId)
+        {
+            var result = await _membresiaService.GetMembresiaPorUsuario(usuarioId);
+
+            if (result.Success)
+            {
+                return Ok(result.Data); // Retorna la membresía si la búsqueda fue exitosa
+            }
+
+            return NotFound(new { message = result.ErrorMsg }); // Si no se encontró, retorna un error
+        }
+
+
         #endregion
     }
 }
