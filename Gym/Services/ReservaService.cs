@@ -63,15 +63,20 @@ public class ReservaService
     {
         try
         {
-            var reserva = await _context.Reservas.ToListAsync(); // Obtenemos todas las reservas
-
+            // -*-CAMBIADO DE .RESERVAS -*-Usamos Include para cargar las relaciones con Usuario y Clase de antemano porque no aparecian al consultar en postman ya que solo tomaba ".Reservas" sin sus relaciones
+            var reservas = await _context.Reservas
+            //.Include(r => r.Usuario)  // Incluye la relación con Usuario
+            //.Include(r => r.Clase)    // Incluye la relación con Clase
+            .ToListAsync();  // Obtiene todas las reservas con las relaciones
+            
             // Verificamos si hay reservas
-            if (reserva == null || !reserva.Any())
+            if (reservas == null || reservas.Count == 0)
             {
                 return Result<IEnumerable<Reserva>>.FailureResult("No se encontraron reservas."); // Si no hay reservas, devolvemos error
             }
 
-            return Result<IEnumerable<Reserva>>.SuccessResult(reserva); // Si hay reservas, devolvemos el resultado
+            Console.WriteLine("---- reservas ----" , reservas);
+            return Result<IEnumerable<Reserva>>.SuccessResult(reservas); // Si hay reservas, devolvemos el resultado
         }
         catch (Exception ex)
         {
@@ -84,6 +89,9 @@ public class ReservaService
     {
         try
         {
+            //.Include(r => r.Usuario)  // Carga la relación con Usuario
+            //.Include(r => r.Clase)    // Carga la relación con Clase
+            //.FirstOrDefaultAsync(r => r.Id == id);
             var reservaID = await _context.Reservas.FindAsync(id); // Buscamos la reserva por Id
             if (reservaID == null)
             {

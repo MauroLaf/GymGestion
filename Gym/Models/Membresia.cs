@@ -14,4 +14,6 @@ public partial class Membresia
     public int DuracionDias { get; set; }
 
     public DateTime FechaInicio { get; set; }
+
+    public virtual ICollection<Usuario> usuarios { get; set; } = new List<Usuario>();
 }

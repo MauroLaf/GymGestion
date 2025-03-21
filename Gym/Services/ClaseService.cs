@@ -81,14 +81,10 @@ namespace Gym.Services
                     //retornamos un result que es el tipo que debemos devolver y accedemos a su metodo para manejar error
                     return Result<Clase>.FailureResult("No se ha encontrado una clase con ese id");
                 }
-                classExist.Nombre = clase.Nombre ?? classExist.Nombre;
-                classExist.Instructor = clase.Instructor ?? classExist.Instructor;
-                /*
-                VER COMO AGREGAR COALESCE en datetime e int
-                classExist.FechaHora = clase.FechaHora ?? classExist.FechaHora;
-                classExist.CuposMax = clase.CuposMax ?? classExist.CuposMax;
-                */
-
+                
+                //
+                _context.Entry(classExist).CurrentValues.SetValues(clase);
+                
                 await _context.SaveChangesAsync();
 
                 return Result<Clase>.SuccessResult(classExist);
