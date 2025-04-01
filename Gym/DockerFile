@@ -1,22 +1,33 @@
-# Usa una imagen base de .NET
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-
-# Usa una imagen de desarrollo para construir el proyecto
+# Usar el SDK de .NET para compilar el proyecto
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Establecer el directorio de trabajo
 WORKDIR /src
-COPY ["Gym/Gym.csproj", "Gym/"]
-RUN dotnet restore "Gym/Gym.csproj"
+
+# Copiar el archivo Gym.csproj
+COPY Gym.csproj ./
+
+# Restaurar las dependencias
+RUN dotnet restore "Gym.csproj"
+
+# Copiar el resto de los archivos del proyecto
 COPY . .
-WORKDIR "/src/Gym"
+
+# Compilar el proyecto
 RUN dotnet build "Gym.csproj" -c Release -o /app/build
 
+# Publicar la aplicación
 FROM build AS publish
 RUN dotnet publish "Gym.csproj" -c Release -o /app/publish
 
-# Copia los archivos al contenedor
-FROM base AS final
+# Establecer la imagen final con ASP.NET runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+# Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
+
+# Copiar los archivos publicados
 COPY --from=publish /app/publish .
+
+# Establecer el comando de inicio de la aplicación
 ENTRYPOINT ["dotnet", "Gym.dll"]
